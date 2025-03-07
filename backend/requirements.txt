@@ -6,3 +6,6 @@ psycopg2==2.9.2
 PyJWT==2.10.1
 pytz==2025.1
 sqlparse==0.5.3
+gunicorn
+whitenoise
+django-cors-headers
