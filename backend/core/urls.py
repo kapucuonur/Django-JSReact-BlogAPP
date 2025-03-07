@@ -4,15 +4,17 @@ from rest_framework.routers import DefaultRouter
 from django.views.generic import TemplateView
 from django.http import HttpResponse
 from .views import frontend
+
 router = DefaultRouter()
 
-router.register('articles', ArticleViewSet, basename='articles')  # 'artilces' -> 'articles'
+router.register('articles', ArticleViewSet, basename='articles')
 router.register('users', UserViewSet)
+
 def home(request):
     return HttpResponse("Welcome to Django Backend!")
-urlpatterns = [
-    path("", frontend),
-    path('api/', include(router.urls)),
-    path("", TemplateView.as_view(template_name="index.html")),
 
+urlpatterns = [
+    path("home/", home),  # Added home view
+    path("", frontend),   # Serve React frontend (or another view if needed)
+    path('api/', include(router.urls)),
 ]
