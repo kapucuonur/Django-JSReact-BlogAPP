@@ -1,1 +1,5 @@
 web: gunicorn Django-JSReact-Blog.backend.backend.wsgi:application
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0b63a592af53d6eff851f1fdfa359fad79cd1fe2
