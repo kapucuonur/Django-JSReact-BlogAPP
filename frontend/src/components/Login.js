@@ -1,114 +1,128 @@
-import React, {useState,useEffect} from 'react'
-import {useNavigate} from 'react-router-dom'
-import {useCookies} from 'react-cookie'
-import APIService from './APIService'
-
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+import APIService from './APIService';
 
 function Login() {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [token, setToken] = useCookies(['mytoken'])
-    let navigate = useNavigate()
-    const [isLogin, setLogin] = useState(true)
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [token, setToken] = useCookies(['mytoken']);
+    const [isLogin, setLogin] = useState(true);
+    const [error, setError] = useState('');
+    let navigate = useNavigate();
 
+    useEffect(() => {
+        const userToken = token['mytoken'];
+        console.log('Login User token is', userToken);
+        console.log('Data type', typeof userToken);
 
-    useEffect(()=> {
-      var user_token = token['mytoken']
-      console.log('Login User token is',user_token)
-    console.log('Data type',typeof(token['mytoken']))
-
-        if(String(user_token) === 'undefined'){
-            navigate('/')
-        }else{
-            navigate('/articles')
-          }
-
-    }, [token])
-
-    const loginBtn = () => {
-     if(username.trim().length !==0 && password.trim().length){
-         console.log('Username And Password Are Set')
-         APIService.LoginUser({username,password})
-         .then(resp => setToken('mytoken', resp.token))
-         .catch(error => console.log(error))
-     }else{
-        console.log('Username And Password Are Not Set')
-         navigate('/')
-     }
-    }
-
-
-    const RegisterBtn = () => {
-        if(username.trim().length !== 0 && password.trim().length !== 0){
-            console.log('Username and password are set');
-            APIService.RegisterUser({username, password})
-            .then(() => loginBtn())
-            .catch(error => console(error))
-        }else{
-            navigate('/')
-            console.log('Username and password are not set');
-
+        if (userToken && userToken !== 'undefined') {
+            navigate('/articles');
+        } else {
+            navigate('/');
         }
-    }
+    }, [token, navigate]);
 
+    const loginBtn = async () => {
+        if (username.trim().length === 0 || password.trim().length === 0) {
+            setError('Username and password are required.');
+            return;
+        }
 
-    const loginStyle={
-        backgroundImage:`url(${process.env.PUBLIC_URL+ "img/10.jpg"})`,
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'cover',
-                'minHeight': '100%',
-                height:'77vh',
-                backgroundPosition:' center',
-                margin:0,
-            
-                };
+        try {
+            const response = await APIService.LoginUser({ username, password });
+            setToken('mytoken', response.token, { path: '/' });
+            setError('');
+        } catch (error) {
+            console.error('Login error:', error);
+            setError('Invalid username or password.');
+        }
+    };
 
+    const registerBtn = async () => {
+        if (username.trim().length === 0 || password.trim().length === 0) {
+            setError('Username and password are required.');
+            return;
+        }
+
+        try {
+            await APIService.RegisterUser({ username, password });
+            await loginBtn(); // Automatically log in after registration
+            setError('');
+        } catch (error) {
+            console.error('Registration error:', error);
+            setError('Registration failed. Please try again.');
+        }
+    };
+
+    const loginStyle = {
+        backgroundImage: `url(${process.env.PUBLIC_URL + "img/10.jpg"})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        minHeight: '100%',
+        height: '77vh',
+        backgroundPosition: 'center',
+        margin: 0,
+    };
 
     return (
         <div className="App">
             <div className="container-fluid">
                 <div className="row">
-                <h1 className="alert alert-danger">Welcome to Blog</h1>
-                <br />
-                <br />
+                    <h1 className="alert alert-danger">Welcome to Blog</h1>
+                    <br />
+                    <br />
 
-                <div className="col-sm-4">
-                    {isLogin ? <h3>Please Login Here</h3> : <h3>Please Register Here</h3>}    
-                <div className="form-group">
-                    <label htmlFor="username">Username</label>
-                <input type="text" value={username} className="form-control" placeholder="Enter Username" onChange ={e=> setUsername(e.target.value)}/>
-            </div>
+                    <div className="col-sm-4">
+                        {isLogin ? <h3>Please Login Here</h3> : <h3>Please Register Here</h3>}
+                        {error && <div className="alert alert-danger">{error}</div>}
 
-  
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                <input type="password" value={password} className="form-control" placeholder="Enter Password" onChange ={e=> setPassword(e.target.value)}/>
-            </div>
+                        <div className="form-group">
+                            <label htmlFor="username">Username</label>
+                            <input
+                                type="text"
+                                value={username}
+                                className="form-control"
+                                placeholder="Enter Username"
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                        </div>
 
-            <br />
+                        <div className="form-group">
+                            <label htmlFor="password">Password</label>
+                            <input
+                                type="password"
+                                value={password}
+                                className="form-control"
+                                placeholder="Enter Password"
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
 
-            <div>
-            {isLogin ? 
-            <div>
-                <button onClick={loginBtn} className="btn btn-primary">Login</button>
-                <p>If You Don't Have Account, Please</p><button onClick={() => setLogin(false)} className="btn btn-primary">Register</button></div> 
-            :
-            <div>
-                <button onClick={RegisterBtn} className="btn btn-primary">Register</button>
-<p>If You Have Account, Please <button className="btn btn-primary" onClick={() => setLogin(true)}>Login</button></p></div>
-            }
-            </div>
-            </div>
+                        <br />
 
+                        <div>
+                            {isLogin ? (
+                                <div>
+                                    <button onClick={loginBtn} className="btn btn-primary">Login</button>
+                                    <p>If You Don't Have an Account, Please</p>
+                                    <button onClick={() => setLogin(false)} className="btn btn-primary">Register</button>
+                                </div>
+                            ) : (
+                                <div>
+                                    <button onClick={registerBtn} className="btn btn-primary">Register</button>
+                                    <p>If You Have an Account, Please</p>
+                                    <button className="btn btn-primary" onClick={() => setLogin(true)}>Login</button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
 
-            <div className="col-sm-8 full-img" style={loginStyle}>
-
-            </div>
-
+                    <div className="col-sm-8 full-img" style={loginStyle}></div>
                 </div>
-                </div>
             </div>
-    )
+        </div>
+    );
 }
 
-export default Login
+export default Login;
