@@ -1,1 +1,1 @@
-web: gunicorn Django-JSReact-Blog.wsgi:application --bind 0.0.0.0:$PORT
+web: gunicorn Django-JSReact-Blog.backend.backend.wsgi:application --bind 0.0.0.0:$PORT
