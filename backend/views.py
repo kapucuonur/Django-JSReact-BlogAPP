@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.http import HttpResponse
 
-def frontend(request):
-    return render(request, "index.html") 
+def home(request):
+    return HttpResponse("Welcome to the Django Backend!")
