@@ -13,10 +13,10 @@ npm run build
 mv build/* ../backend/staticfiles/
 
 # Navigate back to the backend directory
-cd ../backend
+cd ../
 
 # Install backend dependencies from the main requirements.txt
-pip install -r ../requirements.txt
+pip install -r requirements.txt
 
 # Collect static files
 python3 manage.py collectstatic --noinput
