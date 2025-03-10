@@ -1,13 +1,13 @@
 import os
 from pathlib import Path
-import dj_database_url
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-secret-key')
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'https://django-jsreact-blogapp.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'django-jsreact-blogapp.onrender.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -59,12 +59,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(BASE_DIR / 'backend/db.sqlite3'),  # Path to SQLite database
+        'NAME': str(BASE_DIR / 'db.sqlite3'),  # Path to SQLite database
     }
 }
-DATABASES = {
-    'default': dj_database_url.parse(os.getenv('DATABASE_URL', 'sqlite:///db.sqlite3'))
-}
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -93,8 +91,5 @@ CORS_ORIGIN_WHITELIST = [
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'build/static'),
-# ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
