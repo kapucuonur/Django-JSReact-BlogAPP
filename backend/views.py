@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 
 def home(request):
-    return HttpResponse("Welcome to the Django Backend!")
+    return render(request, 'index.html')  # Ensure index.html is in your templates directory
